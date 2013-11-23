@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe User do
-	before do
-		@user = User.new(name: "Example User", email: "user@example.com",
-        	password: "foobar", password_confirmation: "foobar")
-  	end
+  describe User do
+  	before do
+  		@user = User.new(name: "Example User", email: "user@example.com",
+          	password: "foobar", password_confirmation: "foobar")
+    end
 
   	subject { @user }
 
@@ -13,6 +13,7 @@ describe User do
   	it { should respond_to(:password_digest) }
   	it { should respond_to(:password) }
   	it { should respond_to(:password_confirmation) }
+    it { should respond_to(:remember_token) }
   	it { should respond_to(:authenticate) }
 
   	it { should be_valid }
@@ -37,7 +38,7 @@ describe User do
   			addresses = %w[user@foo,com user_at_foo.org example.user@foo. 
   				foo@bar_baz.com foo@bar+baz.com]
   			addresses.each do |invalid_address|
-  				@user.email = invalid_address
+				@user.email = invalid_address
   				expect(@user).not_to be_valid
   			end
   		end
@@ -54,48 +55,54 @@ describe User do
   		end
   	end
 
-  	describe "when email address is already taken" do
-  		before do
-  			user_with_same_email = @user.dup
-  			user_with_same_email.email = @user.email.upcase
-  			user_with_same_email.save
-  		end
+    	describe "when email address is already taken" do
+    		before do
+    			user_with_same_email = @user.dup
+    			user_with_same_email.email = @user.email.upcase
+    			user_with_same_email.save
+    		end
 
-  		it { should_not be_valid }
-  	end
+    		it { should_not be_valid }
+    	end
 
-  	describe "when password is not present" do
-	    before do
-	      	@user = User.new(name: "Example User", email: "user@example.com",
-	                       password: " ", password_confirmation: " ")
-	    end
-    	it { should_not be_valid }
- 	end
+    	describe "when password is not present" do
+  	    before do
+  	      	@user = User.new(name: "Example User", email: "user@example.com",
+  	                       password: " ", password_confirmation: " ")
+  	    end
+      	it { should_not be_valid }
+     	end
 
-  	describe "when password doesn't match confirmation" do
-	    before { @user.password_confirmation = "mismatch" }
-	    it { should_not be_valid }
-  	end
+    	describe "when password doesn't match confirmation" do
+  	    before { @user.password_confirmation = "mismatch" }
+  	    it { should_not be_valid }
+    	end
 
-  	describe "return value of authenticate method" do
-  		before { @user.save }
-  		let(:found_user) { User.find_by(email: @user.email) }
+    	describe "return value of authenticate method" do
+    		before { @user.save }
+    		let(:found_user) { User.find_by(email: @user.email) }
 
-  	describe "with valid password" do
-    	it { should eq found_user.authenticate(@user.password) }
-  	end
+      	describe "with valid password" do
+        	it { should eq found_user.authenticate(@user.password) }
+      	end
 
-  	describe "with invalid password" do
-    	let(:user_for_invalid_password) { found_user.authenticate("invalid") }
+      	describe "with invalid password" do
+        	let(:user_for_invalid_password) { found_user.authenticate("invalid") }
 
-    	it { should_not eq user_for_invalid_password }
-    	specify { expect(user_for_invalid_password).to be_false }
-  	end
-	
-	describe "with a password that's too short" do
-  		before { @user.password = @user.password_confirmation = "a" * 5 }
-  		it { should be_invalid }
-	end  	
+        	it { should_not eq user_for_invalid_password }
+        	specify { expect(user_for_invalid_password).to be_false }
+      	end
+  	
+      	describe "with a password that's too short" do
+        		before { @user.password = @user.password_confirmation = "a" * 5 }
+        		it { should be_invalid }
+      	end  	
 
-end
+      end
+
+      describe "remember_token" do
+        before { @user.save }
+        its(:remember_token) { should_not be_blank }
+        # its applies to specific attribute, not the object 
+      end
 end
