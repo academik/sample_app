@@ -142,7 +142,23 @@ require 'spec_helper'
 				it { should have_link('Sign out', href: signout_path) }
 				specify { expect(user.reload.name).to eq new_name } # reloads value from db to ensure it updated
 				specify { expect(user.reload.email).to eq new_email } # reloads value from db to ensure it updated
-			end
+			end # --- describe "with valid information" --- 
 
-		end
-end
+			describe "forbidden attributes" do
+		      let(:params) do
+		        { user: { admin: true, password: user.password,
+		                  password_confirmation: user.password } }
+		      end
+		      
+		      before do
+		        sign_in user, no_capybara: true # sign in 
+		        patch user_path(user), params # try to patch the user
+		      end
+
+		      specify { expect(user.reload).not_to be_admin }
+		    
+		    end # --- describe "forbidden attributes"
+
+		end # --- describe EDIT --- 
+
+	end # -- describe User Pages  --- 

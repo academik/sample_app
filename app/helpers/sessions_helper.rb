@@ -18,14 +18,14 @@ module SessionsHelper
 	end
 
 	def current_user
-		remember_token = User.encrypt(cookies[:remember_token])
+		remember_token = User.encrypt(cookies[:remember_token]) # encrypt their Cookie and assign it to remember_token
 		@current_user ||= User.find_by(remember_token: remember_token) # ||= is "or equals"; 
 		#Its effect is to set the @current_user instance variable 
 		#to the user corresponding to the remember token, but only if @current_user is undefined. 
 	end
 
 	def current_user?(user)
-		user == current_user
+		user == current_user #if the passed user is the current user, then this resolves to true
 	end
 
 	def signed_in?

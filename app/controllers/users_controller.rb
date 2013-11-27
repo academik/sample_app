@@ -4,7 +4,12 @@
   before_action :admin_user,      only: :destroy
 
   def new
-  	@user = User.new
+  	if current_user.nil?
+      @user = User.new 
+    else 
+      flash[:notice] = "You already have a user.  Sign out to create a new user."
+      redirect_to(root_url)
+    end
   end
 
   def show
@@ -12,14 +17,20 @@
   end
 
   def create
-  	@user = User.new(user_params)
-  	if @user.save
-      sign_in @user
-  		flash[:success] = "Welcome to the Sample App!"
-  		redirect_to @user
-  	else
-  		render 'new'
-  	end
+  	if current_user.nil?
+      @user = User.new(user_params)
+    	if @user.save
+        sign_in @user
+    		flash[:success] = "Welcome to the Sample App!"
+    		redirect_to @user
+    	else
+    		render 'new'
+    	end # --- if @user.save... --- 
+    else
+      flash[:notice] = "You already have a user.  Sign out to create a new user."
+      redirect_to(root_url)
+    end
+
   end
 
   def edit
