@@ -14,6 +14,7 @@
 
   def show
   	@user = User.find(params[:id])
+    @microposts = @user.microposts.paginate(page: params[:page])
   end
 
   def create
@@ -64,11 +65,6 @@
   		# we want the parameters to have a :user attribute, and we want to allow the other attributes to be changed, but no others. 
   		params.require(:user).permit(:name, :email, :password, :password_confirmation)
   	end
-
-    def signed_in_user
-      store_location
-      redirect_to signin_url, notice: "Please sign in." unless signed_in?
-    end
 
     def correct_user
     @user = User.find(params[:id])

@@ -5,7 +5,7 @@
 	<div class="span6 offset3">
 		<%= form_tag('/users/'+params[:id], method: :patch) do %>
 			
-			<%= render 'shared/error_messages' %>
+			<%= render 'shared/error_messages', object: @user %>
 			<%= render 'shared/user_form' %>
 			<%= submit_tag "Save changes", class: "btn btn-large btn-primary" %>
 		<% end %> <!-- form_for -->
