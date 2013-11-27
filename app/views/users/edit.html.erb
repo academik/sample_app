@@ -1,0 +1,16 @@
+<% provide(:title, 'Edit user') %>
+<h1>Update your profile</h1>
+
+<div class="row">
+	<div class="span6 offset3">
+		<%= form_tag('/users/'+params[:id], method: :patch) do %>
+			
+			<%= render 'shared/error_messages' %>
+			<%= render 'shared/user_form' %>
+			<%= submit_tag "Save changes", class: "btn btn-large btn-primary" %>
+		<% end %> <!-- form_for -->
+
+		<%= gravatar_for @user %>
+		<a href="http://gravatar.com/emails">change</a>
+	</div> <!-- SPAN6 OFFSET3 -->
+</div> <!-- ROW -->
