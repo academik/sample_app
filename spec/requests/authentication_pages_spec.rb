@@ -76,6 +76,16 @@ describe "Authentication" do
 
       describe "in the Users controller" do
           
+        describe "vsiting the following page" do 
+          before { visit following_user_path(user) }
+          it { should have_title('Sign in') }
+        end
+
+        describe "visiting the followers page" do
+          before { visit followers_user_path(user) }
+          it { should have_title('Sign in') }
+        end
+
         describe "visiting the edit page" do
           before { visit edit_user_path(user) }
           it { should have_title('Sign in') }
@@ -100,6 +110,19 @@ describe "Authentication" do
         end
       
       end # --- in the Microposts controller --- 
+
+      describe "in the Relationships controller" do
+        describe "submitting to the create action" do
+          before { post relationships_path }
+          specify { expect(response).to redirect_to(signin_path) }
+        end # --- describe "submitting to the create action" --- 
+
+        describe "submitting to the destroy action" do
+          before { delete relationship_path(1) } #hard coded, but works because user is redirected before the application retrieves the id
+          specify { expect(response).to redirect_to(signin_path) }
+        end # --- descrribe "submitting to the destroy action" --- 
+
+      end # --- describe in the Relationships controller --- 
 
     end # -- for non-signed-in users -- 
 
